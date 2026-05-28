@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="panRoot" spacing="4.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drxgb.aurorasheetreader.controller.RawDataController">
+   <children>
+      <BorderPane fx:id="panHeader" VBox.vgrow="NEVER">
+         <right>
+            <HBox spacing="4.0" BorderPane.alignment="CENTER_RIGHT">
+               <children>
+                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="96.0" text="Copy all" HBox.hgrow="NEVER" />
+                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="96.0" text="Paste" HBox.hgrow="NEVER" />
+               </children>
+            </HBox>
+         </right>
+      </BorderPane>
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="320.0" prefHeight="200.0" VBox.vgrow="ALWAYS">
+         <content>
+            <TilePane fx:id="panBody" hgap="2.0" prefColumns="6" prefRows="20" tileAlignment="TOP_LEFT" vgap="2.0">
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding></TilePane>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

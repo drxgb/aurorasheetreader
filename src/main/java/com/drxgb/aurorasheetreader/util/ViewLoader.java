@@ -19,7 +19,7 @@ public abstract class ViewLoader
 	 * @return		A instância dos componentes da tela.
 	 * @throws IOException	Quando o arquivo da visão não for encontrado.
 	 */
-	public static Parent loadView(String path) throws IOException
+	public static Parent load(String path) throws IOException
 	{
 		String fxml;
 		FXMLLoader loader;

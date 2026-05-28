@@ -15,17 +15,38 @@ import javafx.stage.Stage;
 /**
  * Ponto de entrada da aplicação.
  * 
- * @version 1.0.0
  * @author Dr.XGB
+ * @version 1.0.0
  */
 public class App extends Application
 {
+	/*
+	 * ===========================================================
+	 * 			*** CONSTANTES ***
+	 * ===========================================================
+	 */
+	
 	public static final String NAME = "AuroraSheet Reader";
 	public static final int VERSION = 1000000;
 	public static final String VERSION_STRING = "1.0.0";
+	
+	public static final String UNTITLED = "(untitled)";
 
+	
+	/*
+	 * ===========================================================
+	 * 			*** ATRIBUTOS ***
+	 * ===========================================================
+	 */
+	
 	private static Scene scene;
-
+	
+	
+	/*
+	 * ===========================================================
+	 * 			*** MÉTODOS PÚBLICOS ***
+	 * ===========================================================
+	 */
 
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
@@ -38,7 +59,7 @@ public class App extends Application
 		Parent root;
 		InputStream isIcon;
 
-		root = ViewLoader.loadView("Main");
+		root = ViewLoader.load("MainView");
 		isIcon = appClass.getResourceAsStream("favicon.png");
 		scene = new Scene(root);
 		
@@ -49,16 +70,15 @@ public class App extends Application
 		
 		stage.setScene(scene);
 		stage.setTitle(NAME);
-		stage.setMaximized(true);
 		stage.show();
 	}
-
-
-	public static void setRoot(String fxml) throws IOException
-	{
-		scene.setRoot(ViewLoader.loadView(fxml));
-	}
-
+	
+	
+	/*
+	 * ===========================================================
+	 * 			*** MÉTODOS PÚBLICOS ESTÁTICOS ***
+	 * ===========================================================
+	 */
 
 	/**
 	 * Ponto de entrada da aplicação.
@@ -68,5 +88,23 @@ public class App extends Application
 	public static void main(String[] args)
 	{
 		launch();
+	}
+	
+	
+	/**
+	 * @return A cena da aplicação.
+	 */
+	public static Scene getScene()
+	{
+		return scene;
+	}
+	
+	
+	/**
+	 * @return A janela da aplicação.
+	 */
+	public static Stage getWindow()
+	{
+		return (Stage) getScene().getWindow();
 	}
 }
