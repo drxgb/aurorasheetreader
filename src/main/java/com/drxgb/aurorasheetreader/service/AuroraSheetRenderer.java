@@ -2,11 +2,12 @@ package com.drxgb.aurorasheetreader.service;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
+import com.drxgb.aurorasheetreader.io.ColorTranslator;
+import com.drxgb.aurorasheetreader.io.RawDataReader;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.util.ColorMode;
 
@@ -141,49 +142,24 @@ public class AuroraSheetRenderer
 	{
 		List<Integer> palette;
 		Vector<Byte> colorBytes;
-		Iterator<Byte> it;
+		RawDataReader reader;
+		ColorTranslator translator;
 		Integer color;
 		
-		int r, g, b;
 		int numOfBytes;
 		int colorCode;
-		byte current;
 		
-		r = g = b = 0;
+		translator = ColorTranslator.makeColorTranslator(mode);
 		colorBytes = auroraSheet.getColorData(mode);
+		reader = new RawDataReader(colorBytes);
 		numOfBytes = mode.getCode() / 8;
 		palette = new ArrayList<>();
-		it = colorBytes.iterator();
 		
-		while (it.hasNext())
+		while (reader.available() > 0)
 		{
-			colorCode = (int) it.next();
-			
-			for (int i = 1; i < numOfBytes; ++i)
-			{
-				if (it.hasNext())
-				{
-					current = it.next();
-					colorCode += ((int) current) << (i * 8);
-				}
-			}
-			
-			if (mode == ColorMode.COLOR_32_BIT)
-			{
-				r = colorCode & 0xFF;
-				g = (colorCode >> 8) & 0xFF;
-				b = (colorCode >> 16) & 0xFF;
-			}
-			else if (mode == ColorMode.COLOR_16_BIT)
-			{
-				//
-			}
-			
-			color = 0xFF000000;
-			color += r << 16;
-			color += g << 8;
-			color += b;
-			
+			colorCode = reader.read(numOfBytes);
+			color = translator.translate(colorCode);
+
 			palette.add(color);
 		}
 		

@@ -15,9 +15,12 @@ import com.drxgb.aurorasheetreader.util.ColorMode;
 import com.drxgb.aurorasheetreader.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.util.HexValueOperator;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
@@ -170,17 +173,25 @@ public class TabController implements Initializable
 	@FXML
 	public void onBtnResizeAction()
 	{
-		int width;
-		int height;
-
-		width = spnWidth.getValue();
-		height = spnHeight.getValue();
-
-		manager.resize(width, height);
-		pixelManager.syncRawData();
-		btnApplyToPreview.setDisable(width == 0 || height == 0);
-
-		updatePixelPositionSpinners();
+		App.getScene().setCursor(Cursor.WAIT);
+		panRoot.setDisable(true);
+		
+		Platform.runLater(() ->
+		{			
+			int width;
+			int height;
+			
+			width = spnWidth.getValue();
+			height = spnHeight.getValue();
+			
+			manager.resize(width, height);
+			pixelManager.syncRawData();
+			btnApplyToPreview.setDisable(width == 0 || height == 0);
+			
+			updatePixelPositionSpinners();
+			panRoot.setDisable(false);
+			App.getScene().setCursor(Cursor.DEFAULT);
+		});
 	}
 	
 	
@@ -190,19 +201,27 @@ public class TabController implements Initializable
 	@FXML
 	public void onBtnApplyToPreviewAction()
 	{
-		ObservableList<Node> nodes;
-		double zoom;
+		App.getScene().setCursor(Cursor.WAIT);
+		panRoot.setDisable(true);
 		
-		renderer.render(getColorModeSelected());
-		
-		cnvPreview = renderer.getCanvas();
-		zoom = getPreviewZoom();
-		nodes = panPreview.getChildren();
-		
-		cnvPreview.setScaleX(zoom);
-		cnvPreview.setScaleY(zoom);
-		nodes.clear();
-		nodes.add(cnvPreview);
+		Platform.runLater(() ->
+		{			
+			ObservableList<Node> nodes;
+			double zoom;
+			
+			renderer.render(getColorModeSelected());
+			
+			cnvPreview = renderer.getCanvas();
+			zoom = getPreviewZoom();
+			nodes = panPreview.getChildren();
+			
+			cnvPreview.setScaleX(zoom);
+			cnvPreview.setScaleY(zoom);
+			nodes.clear();
+			nodes.add(cnvPreview);
+			panRoot.setDisable(false);
+			App.getScene().setCursor(Cursor.DEFAULT);
+		});
 	}
 	
 	
