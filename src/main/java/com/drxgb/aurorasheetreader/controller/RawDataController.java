@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 
@@ -26,6 +27,7 @@ public class RawDataController implements Initializable
 	 */
 	
 	@FXML private Parent panRoot;
+	@FXML private ScrollPane panScroll;
 	@FXML private Label lblTitle;
 	@FXML private BorderPane panHeader;
 	@FXML private TilePane panBody;
@@ -90,6 +92,7 @@ public class RawDataController implements Initializable
 		
 		rootProperties.put("header", panHeader);
 		rootProperties.put("body", panBody);
+		rootProperties.put("scroll", panScroll);
 		rootProperties.put("dataManager", null);
 	}
 }

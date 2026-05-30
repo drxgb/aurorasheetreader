@@ -12,6 +12,7 @@ import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -105,6 +106,7 @@ public class RawDataViewBuilder
 		VBox root;
 		BorderPane header;
 		TilePane body;
+		ScrollPane scroll;
 		Label lblTitle;
 		DataManager dataManager;
 		ObservableMap<Object, Object> rootProperties;
@@ -113,6 +115,7 @@ public class RawDataViewBuilder
 		rootProperties = root.getProperties();
 		header = (BorderPane) rootProperties.get("header");
 		body = (TilePane) rootProperties.get("body");
+		scroll = (ScrollPane) rootProperties.get("scroll");
 		
 		// Cabeçalho
 		if (! title.isEmpty())
@@ -131,6 +134,7 @@ public class RawDataViewBuilder
 			dataManager = new DataManager(bytes, body.getChildren(), bytesPerGroup);
 			
 			Platform.runLater(() -> dataManager.syncRawData());
+			dataManager.setScroll(scroll);
 			rootProperties.put("dataManager", dataManager);
 		}
 		

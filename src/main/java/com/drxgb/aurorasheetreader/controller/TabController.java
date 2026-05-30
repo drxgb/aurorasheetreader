@@ -293,17 +293,25 @@ public class TabController implements Initializable
 		
 		tglColorModes.selectedToggleProperty().addListener((obs, oldValue, newValue) ->
 		{
+			DataManager dataManager;
+			ColorMode mode;
 			Integer oldIndex;
 			Integer newIndex;
 			Node oldNode;
 			Node newNode;
+			Label lblIndex;
 			ObservableList<Node> nodes;
+			int position;
 			
 			oldIndex = (Integer) oldValue.getUserData();
 			newIndex = (Integer) newValue.getUserData();
+			mode = (ColorMode) newValue.getProperties().get("colorMode");
+			dataManager = getColorDataManager(mode);
 			nodes = panRawColor.getChildren();
 			oldNode = nodes.get(oldIndex);
 			newNode = nodes.get(newIndex);
+			position = spnIndex.getValue();
+			lblIndex = getColorIndexLabel(mode);
 			
 			oldNode.setVisible(false);
 			newNode.setVisible(true);
@@ -311,6 +319,9 @@ public class TabController implements Initializable
 			updateTextFieldHexFromData();
 			updateRgbSpinners();
 			updateColorRect();
+			updateIndexLabel(lblIndex, position);
+			dataManager.setSelectPosition(position);
+			dataManager.updateScrollPosition();
 		});
 		
 		rdb32bit.setUserData(0);
@@ -394,11 +405,16 @@ public class TabController implements Initializable
 			.valueProperty()
 			.addListener((obs, oldValue, newValue) ->
 			{
+				DataManager dataManager;
+				
+				dataManager = getColorDataManager();
+				
 				updateTextFieldHexFromData(newValue);
 				updateRgbSpinners();
 				updateColorRect();
 				updateIndexLabel(getColorIndexLabel(), newValue);
-				getDataManager().setSelectPosition(newValue);
+				dataManager.setSelectPosition(newValue);
+				dataManager.updateScrollPosition();
 			});
 		
 		spnRed.valueProperty().addListener(makeTextFieldHexChangeListener());
@@ -431,9 +447,20 @@ public class TabController implements Initializable
 	/**
 	 * Inicializa os controles das propriedades do pixel.
 	 */
+	@SuppressWarnings("unused")
 	private void setupPixelPropertiesControls()
 	{
 		updatePixelPositionSpinners();
+		
+		spnX.valueProperty().addListener((obs, oldValue, newValue) ->
+		{
+			updatePixelDataPosition(newValue, spnY.getValue());
+		});
+		
+		spnY.valueProperty().addListener((obs, oldValue, newValue) ->
+		{
+			updatePixelDataPosition(spnX.getValue(), newValue);
+		});
 		
 		spnValue.setValueFactory(makeHexSpinnerValueFactory(0, BYTE_MAX, HEX_BYTE_LENGTH));
 		spnValue.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
@@ -661,7 +688,27 @@ public class TabController implements Initializable
 		mode = getColorModeSelected();
 		
 		manager.setColorFromIndex(index, value, mode);
-		getDataManager().updateSingleData(index);
+		getColorDataManager().updateSingleData(index);
+	}
+	
+	
+	/**
+	 * Atualiza a posição dos dados brutos do pixel.
+	 *
+	 * @param x	Posição X
+	 * @param y	Posição Y
+	 */
+	private void updatePixelDataPosition(int x, int y)
+	{
+		int width;
+		int index;
+		
+		width = auroraSheet.getWidth();
+		index = (y * width) + x;
+		
+		pixelManager.setSelectPosition(index);
+		updateIndexLabel(lblPixelIndex, index);
+		updatePositionLabel(lblPixelPosition, x, y);
 	}
 	
 	
@@ -680,6 +727,30 @@ public class TabController implements Initializable
 			.append(' ')
 			.append('(')
 			.append(NumberFormats.hexValue(index))
+			.append(')')
+			.toString();
+		
+		label.setText(text);
+	}
+	
+	
+	/**
+	 * Atualiza o label da posição.
+	 *
+	 * @param label
+	 * @param x
+	 * @param y
+	 */
+	private void updatePositionLabel(Label label, int x, int y)
+	{
+		String text;
+		
+		text = new StringBuilder()
+			.append('(')
+			.append(x)
+			.append(',')
+			.append(' ')
+			.append(y)
 			.append(')')
 			.toString();
 		
@@ -726,13 +797,15 @@ public class TabController implements Initializable
 		panIndex = (HBox) makeRawColorDataFooter();
 		panPosition = new HBox(4.0);
 		lblTitle = new Label("Position:");
-		lblValue = new Label("(0, 0)");
+		lblValue = new Label();
 		positionNodes = panPosition.getChildren();
 		
 		positionNodes.add(lblTitle);
 		positionNodes.add(lblValue);
 		panFooter.setLeft(panIndex);
 		panFooter.setRight(panPosition);
+		
+		updatePositionLabel(lblValue, 0, 0);
 		
 		return panFooter;
 	}
@@ -849,7 +922,7 @@ public class TabController implements Initializable
 	 * @param mode	O modo de cor.
 	 * @return		O gerenciador de dados.
 	 */
-	private DataManager getDataManager(ColorMode mode)
+	private DataManager getColorDataManager(ColorMode mode)
 	{
 		switch (mode)
 		{
@@ -867,9 +940,9 @@ public class TabController implements Initializable
 	 * 
 	 * @return	O gerenciador de dados.
 	 */
-	private DataManager getDataManager()
+	private DataManager getColorDataManager()
 	{
-		return getDataManager(getColorModeSelected());
+		return getColorDataManager(getColorModeSelected());
 	}
 	
 	

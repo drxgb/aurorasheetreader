@@ -51,6 +51,13 @@
 			<version>26</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!-- XGB Utils -->
+		<dependency>
+			<groupId>com.drxgb</groupId>
+			<artifactId>utils</artifactId>
+			<version>1.10.3</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

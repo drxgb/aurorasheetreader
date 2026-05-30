@@ -20,7 +20,7 @@
             </HBox>
          </right>
       </BorderPane>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="320.0" prefHeight="200.0" VBox.vgrow="ALWAYS">
+      <ScrollPane fx:id="panScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="320.0" prefHeight="200.0" VBox.vgrow="ALWAYS">
          <content>
             <TilePane fx:id="panBody" hgap="2.0" prefColumns="6" prefRows="20" tileAlignment="TOP_LEFT" vgap="2.0">
                <padding>

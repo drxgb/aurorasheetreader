@@ -5,13 +5,16 @@ import java.util.Vector;
 import com.drxgb.aurorasheetreader.io.RawDataReader;
 import com.drxgb.aurorasheetreader.util.Bytes;
 import com.drxgb.aurorasheetreader.util.NumberFormats;
+import com.drxgb.aurorasheetreader.util.Scrolls;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -42,6 +45,8 @@ public class DataManager
 	private Vector<Byte> bytes;
 	private ObservableList<Node> nodes;
 	private RawDataReader reader;
+	
+	private ScrollPane scroll;
 	
 	
 	/*
@@ -78,6 +83,7 @@ public class DataManager
 		
 		reader = new RawDataReader(bytes);
 		selectPosition = 0;
+		scroll = null;
 	}
 	
 	
@@ -113,7 +119,10 @@ public class DataManager
 					nodes.add(panGroup);
 				}
 				
-				panGroup.getChildren().add(lblByte);
+				if (panGroup != null)
+				{					
+					panGroup.getChildren().add(lblByte);
+				}
 			}
 			else
 			{
@@ -183,6 +192,28 @@ public class DataManager
 	
 	
 	/**
+	 * Recebe o scroll.
+	 *
+	 * @return O scroll.
+	 */
+	public ScrollPane getScroll()
+	{
+		return scroll;
+	}
+
+	
+	/**
+	 * Define o scroll.
+	 *
+	 * @param scroll O scroll.
+	 */
+	public void setScroll(ScrollPane scroll)
+	{
+		this.scroll = scroll;
+	}
+
+
+	/**
 	 * Modifica a posição da seleção.
 	 *
 	 * @param position	Posição da seleção.
@@ -193,6 +224,23 @@ public class DataManager
 		select(position);
 		
 		selectPosition = position;
+	}
+	
+	
+	/**
+	 * Atualiza a posição da tela rolável, verificando se
+	 * a posição selecionada se encontra fora da tela
+	 * para ajustar a posição da visualização.
+	 */
+	public void updateScrollPosition()
+	{
+		Node current;
+		
+		if (scroll != null)
+		{
+			current = nodes.get(selectPosition);
+			Scrolls.trackNodePosition(scroll, current);
+		}
 	}
 	
 	
