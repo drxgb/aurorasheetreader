@@ -37,7 +37,7 @@ public abstract class NumberFormats
 		HexFormat format;
 		
 		format = HexFormat.of();
-		return format.toHexDigits(value.longValue(), 2).toUpperCase();
+		return format.toHexDigits(value.longValue(), digits).toUpperCase();
 	}
 	
 	

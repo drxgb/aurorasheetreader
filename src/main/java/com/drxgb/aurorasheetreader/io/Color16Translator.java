@@ -18,7 +18,7 @@ public final class Color16Translator extends ColorTranslator
 	 * @see com.drxgb.aurorasheetreader.io.ColorTranslator#red(int)
 	 */
 	@Override
-	protected int red(int code)
+	public int red(int code)
 	{
 		return ((code & 0xF800) >> 11) * 0xFF / 0x1F;
 	}
@@ -28,7 +28,7 @@ public final class Color16Translator extends ColorTranslator
 	 * @see com.drxgb.aurorasheetreader.io.ColorTranslator#green(int)
 	 */
 	@Override
-	protected int green(int code)
+	public int green(int code)
 	{
 		return ((code & 0x07E0) >> 5) * 0xFF / 0x3F;
 	}
@@ -38,7 +38,7 @@ public final class Color16Translator extends ColorTranslator
 	 * @see com.drxgb.aurorasheetreader.io.ColorTranslator#blue(int)
 	 */
 	@Override
-	protected int blue(int code)
+	public int blue(int code)
 	{
 		return (code & 0x1F) * 0xFF / 0x1F;
 	}

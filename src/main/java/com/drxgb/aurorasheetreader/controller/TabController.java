@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.drxgb.aurorasheetreader.App;
+import com.drxgb.aurorasheetreader.io.ColorTranslator;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.service.AuroraSheetManager;
 import com.drxgb.aurorasheetreader.service.AuroraSheetRenderer;
@@ -14,10 +15,11 @@ import com.drxgb.aurorasheetreader.service.RawDataViewBuilder;
 import com.drxgb.aurorasheetreader.util.ColorMode;
 import com.drxgb.aurorasheetreader.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.util.HexValueOperator;
+import com.drxgb.aurorasheetreader.util.NumberFormats;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -41,7 +43,9 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.StringConverter;
 
 /**
  * Controlador da área da aba de imagem.
@@ -62,6 +66,15 @@ public class TabController implements Initializable
 	private static final Integer HEX_32_LENGTH = 6;
 	
 	private static final Integer BYTE_MAX = 0xFF;
+
+	
+	/*
+	 * ===========================================================
+	 * 			*** ATRIBUTOS ***
+	 * ===========================================================
+	 */
+	
+	private boolean lockChainedChanges = false;
 	
 	
 	/*
@@ -225,26 +238,6 @@ public class TabController implements Initializable
 	}
 	
 	
-	/**
-	 * Aplicar as propriedades de cor à paleta.
-	 */
-	@FXML
-	public void onBtnRefreshAction()
-	{
-		// TODO Aplicar as propriedades de cor à paleta.
-	}
-	
-	
-	/**
-	 * Atualizar cor do pixel.
-	 */
-	@FXML
-	public void onBtnSetPixelColorAction()
-	{
-		// TODO Atualizar cor do pixel.
-	}
-	
-	
 	/*
 	 * ===========================================================
 	 * 			*** MÉTODOS PRIVADOS ***
@@ -276,11 +269,11 @@ public class TabController implements Initializable
 	{
 		final int MAX = Integer.MAX_VALUE;
 		
-		spnWidth.setValueFactory(makeHexSpinnerValueFactory(0, MAX));
-		spnHeight.setValueFactory(makeHexSpinnerValueFactory(0, MAX));
+		spnWidth.setValueFactory(makeHexSpinnerValueFactory(0, MAX, HEX_32_LENGTH));
+		spnHeight.setValueFactory(makeHexSpinnerValueFactory(0, MAX, HEX_32_LENGTH));
 		
-		spnWidth.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
-		spnHeight.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
+		spnWidth.getEditor().setTextFormatter(makeHexFormatter(HEX_32_LENGTH));
+		spnHeight.getEditor().setTextFormatter(makeHexFormatter(HEX_32_LENGTH));
 	}
 	
 	
@@ -314,6 +307,10 @@ public class TabController implements Initializable
 			
 			oldNode.setVisible(false);
 			newNode.setVisible(true);
+			
+			updateTextFieldHexFromData();
+			updateRgbSpinners();
+			updateColorRect();
 		});
 		
 		rdb32bit.setUserData(0);
@@ -385,15 +382,49 @@ public class TabController implements Initializable
 	/**
 	 * Inicializa os controles das propriedades da cor.
 	 */
+	@SuppressWarnings("unused")
 	private void setupColorPropertiesControls()
-	{
-		final int MIN = 0x00;
-		final int MAX = BYTE_MAX;
+	{		
+		spnIndex.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
+		spnRed.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
+		spnGreen.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
+		spnBlue.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
 		
-		spnIndex.setValueFactory(makeIntegerSpinnerValueFactory(MIN, MAX));
-		spnRed.setValueFactory(makeIntegerSpinnerValueFactory(MIN, MAX));
-		spnGreen.setValueFactory(makeIntegerSpinnerValueFactory(MIN, MAX));
-		spnBlue.setValueFactory(makeIntegerSpinnerValueFactory(MIN, MAX));
+		spnIndex
+			.valueProperty()
+			.addListener((obs, oldValue, newValue) ->
+			{
+				updateTextFieldHexFromData(newValue);
+				updateRgbSpinners();
+				updateColorRect();
+				updateIndexLabel(getColorIndexLabel(), newValue);
+				getDataManager().setSelectPosition(newValue);
+			});
+		
+		spnRed.valueProperty().addListener(makeTextFieldHexChangeListener());
+		spnGreen.valueProperty().addListener(makeTextFieldHexChangeListener());
+		spnBlue.valueProperty().addListener(makeTextFieldHexChangeListener());
+		
+		txtHexColor
+			.textProperty()
+			.addListener((obs, oldValue, newValue) ->
+			{
+				if (lockChainedChanges)
+				{
+					return;
+				}
+				
+				lockChainedChanges = true;
+				
+				updateRgbSpinners();
+				updateColorRect();
+				updateRawColorData();
+				
+				lockChainedChanges = false;
+			});
+		
+		updateTextFieldHexFromData();
+		updateRgbSpinners();
 	}
 	
 	
@@ -404,7 +435,7 @@ public class TabController implements Initializable
 	{
 		updatePixelPositionSpinners();
 		
-		spnValue.setValueFactory(makeHexSpinnerValueFactory(0, BYTE_MAX));
+		spnValue.setValueFactory(makeHexSpinnerValueFactory(0, BYTE_MAX, HEX_BYTE_LENGTH));
 		spnValue.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
 	}
 	
@@ -500,6 +531,163 @@ public class TabController implements Initializable
 	
 	
 	/**
+	 * Atualiza os spinners das cores vermelho, verde e azul.
+	 */
+	private void updateRgbSpinners()
+	{
+		ColorTranslator translator;
+		HexStringConverter converter;
+		ColorMode mode;
+		int value;		
+		int r;
+		int g;
+		int b;
+		
+		mode = getColorModeSelected();
+		converter = new HexStringConverter();
+		translator = ColorTranslator.makeColorTranslator(mode);
+		value = converter.fromString(txtHexColor.getText());
+		r = translator.red(value);
+		g = translator.green(value);
+		b = translator.blue(value);
+		
+		spnRed.getValueFactory().setValue(r);
+		spnGreen.getValueFactory().setValue(g);
+		spnBlue.getValueFactory().setValue(b);
+	}
+	
+	
+	/**
+	 * Atualiza o formatador de texto do campo
+	 * hexadecimal da cor de acordo com o modo
+	 * de cor selecionado pelo usuário.
+	 * 
+	 * @param index Índice a ser atualizado.
+	 */
+	private void updateTextFieldHexFromData(int index)
+	{
+		ColorMode mode;
+		Integer value;
+		int digits;
+		int len;
+		StringConverter<Integer> converter;
+		
+		mode = getColorModeSelected();
+		len = mode == ColorMode.COLOR_32_BIT
+			? HEX_32_LENGTH
+			: HEX_16_LENGTH;
+		
+		digits = mode == ColorMode.COLOR_32_BIT ? 6 : 4;
+		converter = new HexStringConverter(digits);
+		value = manager.getColorFromIndex(index, mode);
+		
+		txtHexColor.setTextFormatter(makeHexFormatter(len));
+		txtHexColor.setText(converter.toString(value));
+	}
+	
+	
+	/**
+	 * Atualiza o formatador de texto do campo
+	 * hexadecimal da cor de acordo com o modo
+	 * de cor selecionado pelo usuário.
+	 */
+	private void updateTextFieldHexFromData()
+	{
+		updateTextFieldHexFromData(spnIndex.getValue());
+	}
+	
+	
+	/**
+	 * Atualiza o valor do campo de
+	 * texto da cor hexadecimal.
+	 */
+	private void updateTextFieldHexFromRgb()
+	{
+		ColorTranslator translator;
+		HexStringConverter converter;
+		String text;
+		ColorMode mode;
+		int r;
+		int g;
+		int b;
+		int value;
+		int digits;
+		
+		mode = getColorModeSelected();
+		digits = mode == ColorMode.COLOR_32_BIT ? 6 : 4;
+		translator = ColorTranslator.makeColorTranslator(mode);
+		converter = new HexStringConverter(digits);
+		r = spnRed.getValue();
+		g = spnGreen.getValue();
+		b = spnBlue.getValue();
+		value = (r << 16) | (g << 8) | b;
+		value = translator.translate(value);
+		text = converter.toString(value);
+		
+		txtHexColor.setText(text);
+	}
+	
+	
+	/**
+	 * Atualiza a cor do retângulo da prévia da cor.
+	 */
+	private void updateColorRect()
+	{
+		Color color;
+		double r;
+		double g;
+		double b;
+		
+		r = ((double) spnRed.getValue()) * (100.0 / 255.0) / 100.0;
+		g = ((double) spnGreen.getValue()) * (100.0 / 255.0) / 100.0;
+		b = ((double) spnBlue.getValue()) * (100.0 / 255.0) / 100.0;
+		color = Color.color(r, g, b);
+		
+		rectColor.setFill(color);
+	}
+	
+	
+	/**
+	 * Atualiza o paleta de cores dos dados brutos.
+	 */
+	private void updateRawColorData()
+	{
+		int index;
+		String value;
+		ColorMode mode;
+		
+		index = spnIndex.getValue();
+		value = txtHexColor.getText();
+		mode = getColorModeSelected();
+		
+		manager.setColorFromIndex(index, value, mode);
+		getDataManager().updateSingleData(index);
+	}
+	
+	
+	/**
+	 * Atualiza a texto do índice no rodapé dos dados brutos.
+	 * 
+	 * @param label	Label.
+	 * @param index	Índice.
+	 */
+	private void updateIndexLabel(Label label, int index)
+	{
+		String text;
+
+		text = new StringBuilder()
+			.append(index)
+			.append(' ')
+			.append('(')
+			.append(NumberFormats.hexValue(index))
+			.append(')')
+			.toString();
+		
+		label.setText(text);
+	}
+	
+	
+	/**
 	 * @return O rodapé da aba de dados brutos da cor.
 	 */
 	private Parent makeRawColorDataFooter()
@@ -511,9 +699,10 @@ public class TabController implements Initializable
 		
 		panFooter = new HBox(4.0);
 		lblTitle = new Label("Index:");
-		lblValue = new Label("0 (00)");
+		lblValue = new Label();
 		nodes = panFooter.getChildren();
 		
+		updateIndexLabel(lblValue, 0);
 		nodes.add(lblTitle);
 		nodes.add(lblValue);
 		
@@ -571,16 +760,17 @@ public class TabController implements Initializable
 	 * 
 	 * @see javafx.scene.control.Spinner
 	 * 
-	 * @param min	Valor mínimo
-	 * @param max	Valor máximo
+	 * @param min		Valor mínimo
+	 * @param max		Valor máximo
+	 * @param limit		Quantidade de caracters
 	 * @return	A fábrica de valores de <code>Spinner</code>.
 	 */
-	private SpinnerValueFactory<Integer> makeHexSpinnerValueFactory(int min, int max)
+	private SpinnerValueFactory<Integer> makeHexSpinnerValueFactory(int min, int max, int limit)
 	{
 		SpinnerValueFactory<Integer> factory;
 		
 		factory = makeIntegerSpinnerValueFactory(min, max);
-		factory.setConverter(new HexStringConverter());
+		factory.setConverter(new HexStringConverter(limit));
 		
 		return factory;
 	}
@@ -596,6 +786,33 @@ public class TabController implements Initializable
 	private <T> TextFormatter<T> makeHexFormatter(int limit)
 	{
 		return new TextFormatter<>(new HexValueOperator(limit));
+	}
+	
+	
+	/**
+	 * Callback que atualiza o campo de terxto da cor
+	 * hexadecimal e os dados brutos a cor.
+	 *
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private ChangeListener<Integer> makeTextFieldHexChangeListener()
+	{
+		return (obs, oldValue, newValue) ->
+		{
+			if (lockChainedChanges)
+			{
+				return;
+			}
+			
+			lockChainedChanges = true;
+			
+			updateTextFieldHexFromRgb();
+			updateRawColorData();
+			updateColorRect();
+			
+			lockChainedChanges = false;
+		};
 	}
 	
 	
@@ -622,6 +839,68 @@ public class TabController implements Initializable
 		final Node chk = (Node) tglColorModes.getSelectedToggle();
 		
 		return (ColorMode) chk.getProperties().get("colorMode");
+	}
+	
+	
+	/**
+	 * Recebe o gerenciador de dados de acordo
+	 * com o modo de cor.
+	 *
+	 * @param mode	O modo de cor.
+	 * @return		O gerenciador de dados.
+	 */
+	private DataManager getDataManager(ColorMode mode)
+	{
+		switch (mode)
+		{
+			case COLOR_16_BIT: return color16Manager;
+			case COLOR_32_BIT: return color32Manager;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Recebe o gerenciador de dados de
+	 * acordo com o modo de cor selecionado.
+	 * 
+	 * @return	O gerenciador de dados.
+	 */
+	private DataManager getDataManager()
+	{
+		return getDataManager(getColorModeSelected());
+	}
+	
+	
+	/**
+	 * Recebe a label do índice de cor de acordo com
+	 * o modo de cor.
+	 *
+	 * @param mode	O modo de cor.
+	 * @return		O label do índice.
+	 */
+	private Label getColorIndexLabel(ColorMode mode)
+	{
+		switch (mode)
+		{
+			case COLOR_16_BIT: return lbl16ColorIndex;
+			case COLOR_32_BIT: return lbl32ColorIndex;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Recebe a label do índice de cor de acordo com
+	 * o modo de cor selecionado.
+	 *
+	 * @return		O label do índice.
+	 */
+	private Label getColorIndexLabel()
+	{
+		return getColorIndexLabel(getColorModeSelected());
 	}
 	
 	

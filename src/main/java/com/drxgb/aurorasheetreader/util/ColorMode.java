@@ -26,4 +26,10 @@ public enum ColorMode
 	{
 		return code;
 	}
+	
+	
+	public int getBytes()
+	{
+		return code / 8;
+	}
 }

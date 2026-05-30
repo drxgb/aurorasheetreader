@@ -23,7 +23,7 @@
    <items>
       <HBox spacing="20.0">
          <children>
-            <VBox maxWidth="640.0" spacing="8.0" HBox.hgrow="ALWAYS">
+            <VBox maxWidth="400.0" spacing="8.0" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
@@ -41,13 +41,13 @@
                               <HBox alignment="CENTER_LEFT" spacing="4.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <Label text="Width" />
-                                    <Spinner fx:id="spnWidth" editable="true" prefWidth="64.0" HBox.hgrow="NEVER" />
+                                    <Spinner fx:id="spnWidth" editable="true" maxWidth="80.0" HBox.hgrow="NEVER" />
                                     <Label text="Height">
                                        <HBox.margin>
                                           <Insets left="8.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <Spinner fx:id="spnHeight" editable="true" prefWidth="64.0" HBox.hgrow="NEVER" />
+                                    <Spinner fx:id="spnHeight" editable="true" maxWidth="80.0" HBox.hgrow="NEVER" />
                                  </children>
                               </HBox>
                            </left>
@@ -96,7 +96,6 @@
                               <Spinner fx:id="spnBlue" editable="true" prefWidth="64.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                               <TextField fx:id="txtHexColor" alignment="CENTER" prefWidth="64.0" text="000000" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                               <Rectangle fx:id="rectColor" arcHeight="5.0" arcWidth="5.0" height="48.0" stroke="BLACK" strokeType="INSIDE" width="48.0" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowSpan="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
-                              <Button maxWidth="-Infinity" mnemonicParsing="false" onAction="#onBtnRefreshAction" prefWidth="80.0" text="Refresh" GridPane.columnIndex="3" GridPane.columnSpan="2" />
                            </children>
                         </GridPane>
                      </content>
@@ -110,7 +109,6 @@
                                   <ColumnConstraints hgrow="NEVER" />
                                     <ColumnConstraints hgrow="NEVER" />
                                   <ColumnConstraints hgrow="NEVER" />
-                                    <ColumnConstraints hgrow="NEVER" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints vgrow="NEVER" />
@@ -123,7 +121,6 @@
                                     <Spinner fx:id="spnX" editable="true" prefWidth="60.0" GridPane.rowIndex="1" />
                                     <Spinner fx:id="spnY" editable="true" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Spinner fx:id="spnValue" editable="true" prefWidth="60.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Button mnemonicParsing="false" onAction="#onBtnSetPixelColorAction" prefWidth="96.0" text="Set pixel color" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </children>

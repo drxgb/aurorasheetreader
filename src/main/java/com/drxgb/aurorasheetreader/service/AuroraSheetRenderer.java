@@ -152,7 +152,7 @@ public class AuroraSheetRenderer
 		translator = ColorTranslator.makeColorTranslator(mode);
 		colorBytes = auroraSheet.getColorData(mode);
 		reader = new RawDataReader(colorBytes);
-		numOfBytes = mode.getCode() / 8;
+		numOfBytes = mode.getBytes();
 		palette = new ArrayList<>();
 		
 		while (reader.available() > 0)

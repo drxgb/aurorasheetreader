@@ -77,19 +77,19 @@ public abstract class ColorTranslator
 	 * @param code	Código da cor.
 	 * @return Código da cor vermelha.
 	 */
-	protected abstract int red(int code);
+	public abstract int red(int code);
 	
 	
 	/**
 	 * @param code	Código da cor.
 	 * @return Código da cor verde.
 	 */
-	protected abstract int green(int code);
+	public abstract int green(int code);
 	
 	
 	/**
 	 * @param code	Código da cor.
 	 * @return Código da cor azul.
 	 */
-	protected abstract int blue(int code);
+	public abstract int blue(int code);
 }

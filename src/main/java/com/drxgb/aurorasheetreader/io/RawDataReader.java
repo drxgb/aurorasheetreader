@@ -112,13 +112,41 @@ public class RawDataReader
 	 * Lê os dados e converte para um valor numérico
 	 * a partir do início da leitura.
 	 *
-	 * @param len	Quantidade de caracteres para ler.
-	 * @return	O valor recebido pela leitura.
+	 * @param offset		Posição inicial da leitura.
+	 * @param len			Quantidade de caracteres para ler.
+	 * @param saveLastPos	Se for <code>true</code> a posiçao
+	 * 							de leitura voltará ao estado anterior.
+	 * @return				O valor recebido pela leitura.
+	 */
+	public int read(int offset, int len, boolean saveLastPos)
+	{
+		Integer lastPos;
+		int result;
+		
+		lastPos = saveLastPos ? position : null;
+		position = offset;		
+		result = read(len);
+		
+		if (lastPos != null)
+		{
+			position = lastPos;
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Lê os dados e converte para um valor numérico
+	 * a partir do início da leitura.
+	 *
+	 * @param offset	Posição inicial da leitura.
+	 * @param len		Quantidade de caracteres para ler.
+	 * @return			O valor recebido pela leitura.
 	 */
 	public int read(int offset, int len)
 	{
-		position = offset;
-		return read(len);
+		return read(offset, len, false);
 	}
 	
 	
