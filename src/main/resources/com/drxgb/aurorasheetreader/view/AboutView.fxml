@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<HBox alignment="TOP_CENTER" spacing="24.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/26" fx:controller="com.drxgb.aurorasheetreader.controller.AboutController">
+   <children>
+      <StackPane>
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../drxgb.png" />
+               </image>
+            </ImageView>
+         </children>
+      </StackPane>
+      <BorderPane HBox.hgrow="ALWAYS">
+         <top>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="0.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="JavaFX version:" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                  <Label text="Java version:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                  <Label fx:id="lblJavaVersion" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                  <Label fx:id="lblJavaFxVersion" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Label text="Version" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                  <Label fx:id="lblVersion" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                  <Label fx:id="lblTitle" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+         </top>
+         <bottom>
+            <VBox alignment="TOP_CENTER" BorderPane.alignment="TOP_CENTER">
+               <children>
+                  <Label fx:id="lblCopyright" />
+                  <Hyperlink contentDisplay="CENTER" onAction="#onHlkAuthorSiteAction" text="https://drxgb.com" />
+                  <Hyperlink contentDisplay="CENTER" onAction="#onHlkAuthorSiteAction" text="https://github.com/drxgb" />
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
+   </padding>
+</HBox>

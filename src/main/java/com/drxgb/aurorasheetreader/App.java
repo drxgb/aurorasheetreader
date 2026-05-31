@@ -27,6 +27,7 @@ public class App extends Application
 	 */
 	
 	public static final String NAME = "AuroraSheet Reader";
+	public static final int RELEASE_YEAR = 2026;
 	public static final int VERSION = 1000000;
 	public static final String VERSION_STRING = "1.0.0";
 	
@@ -39,6 +40,7 @@ public class App extends Application
 	 * ===========================================================
 	 */
 	
+	private static App app;
 	private static Scene scene;
 	
 	
@@ -59,6 +61,7 @@ public class App extends Application
 		Parent root;
 		InputStream isIcon;
 
+		app = this;
 		root = ViewLoader.load("MainView");
 		isIcon = appClass.getResourceAsStream("favicon.png");
 		scene = new Scene(root);
@@ -106,5 +109,16 @@ public class App extends Application
 	public static Stage getWindow()
 	{
 		return (Stage) getScene().getWindow();
+	}
+	
+	
+	/**
+	 * Recebe a instância da aplicação.
+	 *
+	 * @return	A aplicação.
+	 */
+	public static App getInstance()
+	{
+		return app;
 	}
 }
