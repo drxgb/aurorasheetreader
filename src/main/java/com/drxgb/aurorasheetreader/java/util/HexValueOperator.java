@@ -1,4 +1,4 @@
-package com.drxgb.aurorasheetreader.util;
+package com.drxgb.aurorasheetreader.java.util;
 
 import java.util.function.UnaryOperator;
 

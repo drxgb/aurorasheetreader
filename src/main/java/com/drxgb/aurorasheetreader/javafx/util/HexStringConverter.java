@@ -1,4 +1,6 @@
-package com.drxgb.aurorasheetreader.util;
+package com.drxgb.aurorasheetreader.javafx.util;
+
+import com.drxgb.aurorasheetreader.util.NumberFormats;
 
 import javafx.util.StringConverter;
 

@@ -7,14 +7,15 @@ import java.util.ResourceBundle;
 
 import com.drxgb.aurorasheetreader.App;
 import com.drxgb.aurorasheetreader.io.ColorTranslator;
+import com.drxgb.aurorasheetreader.java.util.HexValueOperator;
+import com.drxgb.aurorasheetreader.java.util.NumericValueOperator;
+import com.drxgb.aurorasheetreader.javafx.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.service.AuroraSheetManager;
 import com.drxgb.aurorasheetreader.service.AuroraSheetRenderer;
 import com.drxgb.aurorasheetreader.service.DataManager;
 import com.drxgb.aurorasheetreader.service.RawDataViewBuilder;
 import com.drxgb.aurorasheetreader.util.ColorMode;
-import com.drxgb.aurorasheetreader.util.HexStringConverter;
-import com.drxgb.aurorasheetreader.util.HexValueOperator;
 import com.drxgb.aurorasheetreader.util.NumberFormats;
 
 import javafx.application.Platform;
@@ -401,6 +402,7 @@ public class TabController implements Initializable
 		spnGreen.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
 		spnBlue.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
 		
+		spnIndex.getEditor().setTextFormatter(makeNumericFormatter());
 		spnIndex
 			.valueProperty()
 			.addListener((obs, oldValue, newValue) ->
@@ -421,6 +423,10 @@ public class TabController implements Initializable
 		spnGreen.valueProperty().addListener(makeTextFieldHexChangeListener());
 		spnBlue.valueProperty().addListener(makeTextFieldHexChangeListener());
 		
+		spnRed.getEditor().setTextFormatter(makeNumericFormatter());
+		spnGreen.getEditor().setTextFormatter(makeNumericFormatter());
+		spnBlue.getEditor().setTextFormatter(makeNumericFormatter());
+		
 		txtHexColor
 			.textProperty()
 			.addListener((obs, oldValue, newValue) ->
@@ -433,8 +439,8 @@ public class TabController implements Initializable
 				lockChainedChanges = true;
 				
 				updateRgbSpinners();
-				updateColorRect();
 				updateRawColorData();
+				updateColorRect();
 				
 				lockChainedChanges = false;
 			});
@@ -859,6 +865,18 @@ public class TabController implements Initializable
 	private <T> TextFormatter<T> makeHexFormatter(int limit)
 	{
 		return new TextFormatter<>(new HexValueOperator(limit));
+	}
+	
+	
+	/**
+	 * Cria o formatador de texto.
+	 *
+	 * @param <T>	Tipo de conteúdo do formatador.
+	 * @return		O formatador de texto.
+	 */
+	private <T> TextFormatter<T> makeNumericFormatter()
+	{
+		return new TextFormatter<>(new NumericValueOperator());
 	}
 	
 	

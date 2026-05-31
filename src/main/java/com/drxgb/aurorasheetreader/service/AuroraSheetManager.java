@@ -5,10 +5,10 @@ import java.util.Vector;
 
 import com.drxgb.aurorasheetreader.io.RawDataReader;
 import com.drxgb.aurorasheetreader.io.RawDataWriter;
+import com.drxgb.aurorasheetreader.javafx.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.util.Bytes;
 import com.drxgb.aurorasheetreader.util.ColorMode;
-import com.drxgb.aurorasheetreader.util.HexStringConverter;
 
 /**
  * Responsável por gerenciar um <code>AuroraSheet</code>
