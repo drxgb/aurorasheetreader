@@ -18,7 +18,6 @@ public class RawDataWriter
 	 */
 	
 	private int position;
-	private int length;
 	
 
 	/*
@@ -47,7 +46,6 @@ public class RawDataWriter
 		
 		this.data = data;
 		this.position = 0;
-		this.length = data.size();
 	}
 	
 	
@@ -64,7 +62,7 @@ public class RawDataWriter
 	 */
 	public int available()
 	{
-		return length - position;
+		return length() - position;
 	}
 	
 	
@@ -119,5 +117,22 @@ public class RawDataWriter
 	public void write(int offset, byte[] bytes)
 	{
 		write(offset, bytes, false);
+	}
+	
+	
+	/*
+	 * ===========================================================
+	 * 			*** MÉTODOS PRIVADOS ***
+	 * ===========================================================
+	 */
+	
+	/**
+	 * Recebe o tamanho dos dados de escrita.
+	 *
+	 * @return
+	 */
+	private int length()
+	{
+		return data.size();
 	}
 }

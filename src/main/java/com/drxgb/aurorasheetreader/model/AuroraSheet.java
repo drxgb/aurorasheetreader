@@ -94,6 +94,17 @@ public class AuroraSheet
 	}
 	
 	
+	/**
+	 * Verifica se a imagem está vazia.
+	 *
+	 * @return	Se a imagem está vazia.
+	 */
+	public boolean isEmpty()
+	{
+		return width == 0 || height == 0;
+	}
+	
+	
 	/*
 	 * ===========================================================
 	 * 			*** GETTERS ***

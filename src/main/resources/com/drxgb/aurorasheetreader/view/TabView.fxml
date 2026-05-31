@@ -100,7 +100,7 @@
                         </GridPane>
                      </content>
                   </TitledPane>
-                  <TitledPane collapsible="false" text="Pixel properties" VBox.vgrow="NEVER">
+                  <TitledPane fx:id="panPixelProperties" collapsible="false" disable="true" text="Pixel properties" VBox.vgrow="NEVER">
                      <content>
                         <VBox spacing="8.0">
                            <children>

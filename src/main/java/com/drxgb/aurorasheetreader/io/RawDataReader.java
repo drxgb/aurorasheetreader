@@ -20,7 +20,6 @@ public class RawDataReader
 	 */
 	
 	private int position;
-	private int length;
 	
 	
 	/*
@@ -49,7 +48,6 @@ public class RawDataReader
 		
 		this.data = data;
 		this.position = 0;
-		this.length = data.size();
 	}
 	
 	
@@ -66,7 +64,7 @@ public class RawDataReader
 	 */
 	public int available()
 	{
-		return length - position;
+		return length() - position;
 	}
 
 	
@@ -83,15 +81,17 @@ public class RawDataReader
 		int end;
 		int value;
 		int i;
+		int l;
 		byte b;
 		
 		result = 0;
+		l = length();
 		end = position + len;
 		i = 0;
 		
-		if (end > length)
+		if (end > l)
 		{
-			end = length;
+			end = l;
 		}
 		
 		while (position < end)
@@ -171,14 +171,33 @@ public class RawDataReader
 	public InputStream asInputStream()
 	{
 		byte[] buf;
+		int len;
 		
-		buf = new byte[length];
+		len = length();
+		buf = new byte[len];
 		
-		for (int i = 0; i < length; ++i)
+		for (int i = 0; i < len; ++i)
 		{
 			buf[i] = data.get(i);
 		}
 		
 		return new ByteArrayInputStream(buf);
+	}
+	
+	
+	/*
+	 * ===========================================================
+	 * 			*** MÉTODOS PRIVADOS ***
+	 * ===========================================================
+	 */
+	
+	/**
+	 * Recebe o tamanho dos dados de escrita.
+	 *
+	 * @return
+	 */
+	private int length()
+	{
+		return data.size();
 	}
 }

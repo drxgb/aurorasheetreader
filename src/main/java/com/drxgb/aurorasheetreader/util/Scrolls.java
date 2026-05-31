@@ -65,7 +65,7 @@ public abstract class Scrolls
 			
 			if (newValue != -1.0)
 			{
-				newValue = Double.min(Double.max(newValue, 1.0), 0.0);
+				newValue = Double.min(Double.max(newValue, 0.0), 1.0);
 				pane.setHvalue(newValue);
 			}
 		}
@@ -91,7 +91,7 @@ public abstract class Scrolls
 			
 			if (newValue != -1.0)
 			{
-				newValue = Double.min(Double.max(newValue, 1.0), 0.0);
+				newValue = Double.min(Double.max(newValue, 0.0), 1.0);
 				pane.setVvalue(newValue);
 			}
 		}

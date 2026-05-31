@@ -35,6 +35,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -110,6 +111,7 @@ public class TabController implements Initializable
 	@FXML private Rectangle rectColor;
 	
 	// Propriedades do pixel
+	@FXML private TitledPane panPixelProperties;
 	@FXML private Spinner<Integer> spnValue;
 	@FXML private Spinner<Integer> spnX;
 	@FXML private Spinner<Integer> spnY;
@@ -194,16 +196,22 @@ public class TabController implements Initializable
 		{			
 			int width;
 			int height;
+			boolean isEmpty;
 			
 			width = spnWidth.getValue();
 			height = spnHeight.getValue();
 			
 			manager.resize(width, height);
 			pixelManager.syncRawData();
-			btnApplyToPreview.setDisable(width == 0 || height == 0);
+			
+			isEmpty = auroraSheet.isEmpty();
 			
 			updatePixelPositionSpinners();
+			
+			btnApplyToPreview.setDisable(isEmpty);
+			panPixelProperties.setDisable(isEmpty);			
 			panRoot.setDisable(false);
+
 			App.getScene().setCursor(Cursor.DEFAULT);
 		});
 	}
@@ -461,15 +469,35 @@ public class TabController implements Initializable
 		spnX.valueProperty().addListener((obs, oldValue, newValue) ->
 		{
 			updatePixelDataPosition(newValue, spnY.getValue());
+			updateTextFieldPixelValue(newValue);
 		});
 		
 		spnY.valueProperty().addListener((obs, oldValue, newValue) ->
 		{
 			updatePixelDataPosition(spnX.getValue(), newValue);
+			updateTextFieldPixelValue(newValue);
 		});
 		
 		spnValue.setValueFactory(makeHexSpinnerValueFactory(0, BYTE_MAX, HEX_BYTE_LENGTH));
 		spnValue.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
+		spnValue.valueProperty().addListener((obs, oldValue, newValue) ->
+		{
+			int x;
+			int y;
+			int width;
+			int index;
+			
+			if (! auroraSheet.isEmpty())
+			{
+				x = spnX.getValue();
+				y = spnY.getValue();
+				width = auroraSheet.getWidth();
+				index = (y * width) + (x % width);
+				
+				manager.setPixelFromIndex(index, newValue.byteValue());
+				pixelManager.updateSingleData(index);
+			}
+		});
 	}
 	
 	
@@ -713,8 +741,23 @@ public class TabController implements Initializable
 		index = (y * width) + x;
 		
 		pixelManager.setSelectPosition(index);
+		pixelManager.updateScrollPosition();
 		updateIndexLabel(lblPixelIndex, index);
 		updatePositionLabel(lblPixelPosition, x, y);
+	}
+	
+	
+	/**
+	 * Atualiza o valor do campo do valor do pixel.
+	 *
+	 * @param index	O índice.
+	 */
+	private void updateTextFieldPixelValue(int index)
+	{
+		int value;
+		
+		value = manager.getPixelFromIndex(index);
+		spnValue.getValueFactory().setValue(value);
 	}
 	
 	

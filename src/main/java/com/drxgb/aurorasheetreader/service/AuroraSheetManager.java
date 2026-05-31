@@ -25,10 +25,14 @@ public class AuroraSheetManager
 	 */
 	
 	private AuroraSheet auroraSheet;
+	
 	private RawDataReader color32Reader;
 	private RawDataReader color16Reader;
+	private RawDataReader pixelReader;
+	
 	private RawDataWriter color32Writer;
 	private RawDataWriter color16Writer;
+	private RawDataWriter pixelWriter;
 	
 	
 	/*
@@ -44,17 +48,21 @@ public class AuroraSheetManager
 	{
 		Vector<Byte> color32Data;
 		Vector<Byte> color16Data;
+		Vector<Byte> pixelData;
 		
 		Objects.requireNonNull(auroraSheet);
 		
 		color32Data = auroraSheet.getColorData(ColorMode.COLOR_32_BIT);
 		color16Data = auroraSheet.getColorData(ColorMode.COLOR_16_BIT);
+		pixelData = auroraSheet.getPixelData();
 		
 		this.auroraSheet = auroraSheet;
 		this.color32Reader = new RawDataReader(color32Data);
 		this.color16Reader = new RawDataReader(color16Data);
+		this.pixelReader = new RawDataReader(pixelData);
 		this.color32Writer = new RawDataWriter(color32Data);
 		this.color16Writer = new RawDataWriter(color16Data);
+		this.pixelWriter = new RawDataWriter(pixelData);
 	}
 	
 	
@@ -136,6 +144,35 @@ public class AuroraSheetManager
 		color = converter.fromString(value);
 		
 		setColorFromIndex(index, color, mode);
+	}
+	
+	
+	/**
+	 * Lê o índice da cor do pixel de acordo
+	 * com o índice dos dados brutos.
+	 *
+	 * @param index	Índice da posição do pixel.
+	 * @return		Valor lido dos dados brutos.
+	 */
+	public int getPixelFromIndex(int index)
+	{
+		return pixelReader.read(index, 1);
+	}
+	
+	
+	/**
+	 * Escreve o índice da cor do pixel ao <code>AuroraSheet</code>
+	 * no índice dos dados brutos.
+	 *
+	 * @param index	Índice da posição do pixel.
+	 * @param value	Valor a ser escrito.
+	 */
+	public void setPixelFromIndex(int index, byte value)
+	{
+		byte[] bytes;
+		
+		bytes = new byte[] { value };
+		pixelWriter.write(index, bytes);
 	}
 	
 	
