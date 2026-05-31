@@ -1,19 +1,19 @@
 package com.drxgb.aurorasheetreader.service;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 import com.drxgb.aurorasheetreader.io.ColorTranslator;
 import com.drxgb.aurorasheetreader.io.RawDataReader;
+import com.drxgb.aurorasheetreader.javax.swing.PixelCanvas;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.util.ColorMode;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelWriter;
+import javafx.embed.swing.SwingNode;
 
 /**
  * Responsável por gerar a imagem de <code>AuroraSheet</code>.
@@ -26,12 +26,22 @@ public class AuroraSheetRenderer
 {
 	/*
 	 * ===========================================================
+	 * 			*** ATRIBUTOS ***
+	 * ===========================================================
+	 */
+	
+	private int[] pixelBuf;
+	private List<Integer> palette;
+	
+	
+	/*
+	 * ===========================================================
 	 * 			*** ASSOCIAÇÕES ***
 	 * ===========================================================
 	 */
 	
 	private AuroraSheet auroraSheet;
-	private Canvas canvas;
+	private SwingNode canvas;
 
 	 
 	/*
@@ -63,37 +73,31 @@ public class AuroraSheetRenderer
 	/**
 	 * Gera a imagem contida em <code>AuroraSheet</code>.
 	 * 
-	 * @param	mode	O modo de cores a ser renderizado.
+	 * @param mode	O modo de cores a ser renderizado.
+	 * @param scale	Escalonamento da imagem.
 	 */
-	public void render(ColorMode mode)
+	public void render(ColorMode mode, double scale)
+	{		
+		canvas = new SwingNode();
+		
+		refreshPalette(mode);
+		refreshPixelBuffer();
+		
+		SwingUtilities.invokeLater(drawCanvas(scale));
+	}
+	
+	
+	/**
+	 * Modifica o escalonamento da imagem.
+	 *
+	 * @param scale	Escalonamento.
+	 */
+	public void setScale(double scale)
 	{
-		List<Integer> palette;
-		Vector<Byte> pixels;
-		PixelWriter writer;
-		PixelFormat<IntBuffer> format;
-		int[] buffer;
-		int width;
-		int height;
-		int i;
-		
-		clearCanvas();
-		
-		palette = makePalette(mode);
-		pixels = auroraSheet.getPixelData();
-		writer = canvas.getGraphicsContext2D().getPixelWriter();
-		format = PixelFormat.getIntArgbInstance();
-		
-		width = auroraSheet.getWidth();
-		height = auroraSheet.getHeight();
-		buffer = new int[width * height];
-		i = 0;
-		
-		for (Byte b : pixels)
+		if (canvas != null)
 		{
-			buffer[i++] = palette.get((int) b);
+			SwingUtilities.invokeLater(drawCanvas(scale));
 		}
-		
-		writer.setPixels(0, 0, width, height, format, buffer, 0, width);
 	}
 	
 	
@@ -119,7 +123,7 @@ public class AuroraSheetRenderer
 	 *
 	 * @return O canvas.
 	 */
-	public Canvas getCanvas()
+	public SwingNode getCanvas()
 	{
 		return canvas;
 	}
@@ -136,11 +140,9 @@ public class AuroraSheetRenderer
 	 * no desenho da imagem.
 	 *
 	 * @param mode	Modo de cores (16-bit ou 32-bit).
-	 * @return	A paleta de cores.
 	 */
-	private List<Integer> makePalette(ColorMode mode)
+	private void refreshPalette(ColorMode mode)
 	{
-		List<Integer> palette;
 		Vector<Byte> colorBytes;
 		RawDataReader reader;
 		ColorTranslator translator;
@@ -162,22 +164,61 @@ public class AuroraSheetRenderer
 
 			palette.add(color);
 		}
-		
-		return palette;
 	}
 	
 	
 	/**
-	 * Limpa a imagem.
+	 * Atualiza os dados do pixel para renderização.
 	 */
-	private void clearCanvas()
+	private void refreshPixelBuffer()
 	{
-		double width;
-		double height;
+		Vector<Byte> pixels;
+		int width;
+		int height;
+		int i;
 		
-		width = auroraSheet.getWidth().doubleValue();
-		height = auroraSheet.getHeight().doubleValue();
+		pixels = auroraSheet.getPixelData();
+		width = auroraSheet.getWidth();
+		height = auroraSheet.getHeight();
+		i = 0;
+		pixelBuf = new int[width * height];
 		
-		canvas = new Canvas(width, height);
+		for (Byte b : pixels)
+		{
+			pixelBuf[i++] = palette.get((int) b);
+		}
+	}
+	
+	
+	/**
+	 * Ação para desenhar o conteúdo à imagem.
+	 *
+	 * @param scale		Escalonamento.
+	 * @return			Callback do desenho da imagem.
+	 */
+	private Runnable drawCanvas(double scale)
+	{
+		final int width;
+		final int height;
+
+		if (canvas == null)
+		{
+			return null;
+		}
+		
+		width = auroraSheet.getWidth();
+		height = auroraSheet.getHeight();
+		
+		return () ->
+		{
+			PixelCanvas content;
+			
+			content = new PixelCanvas(width, height);
+			content.setPixels(pixelBuf);
+			content.setScale(scale);
+			content.render();
+			
+			canvas.setContent(content);
+		};
 	}
 }

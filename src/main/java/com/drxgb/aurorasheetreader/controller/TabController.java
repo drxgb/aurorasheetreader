@@ -3,6 +3,8 @@ package com.drxgb.aurorasheetreader.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.drxgb.aurorasheetreader.App;
@@ -26,7 +28,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -77,6 +78,7 @@ public class TabController implements Initializable
 	 */
 	
 	private boolean lockChainedChanges = false;
+	private Map<Double, Node> previewCache;
 	
 	
 	/*
@@ -121,7 +123,6 @@ public class TabController implements Initializable
 	@FXML private HBox panZoomButtons;
 	
 	private ToggleGroup tglZoomButtons;
-	private Canvas cnvPreview;
 	
 	// Editor de dados brutos
 	@FXML private StackPane panRawColor;
@@ -163,6 +164,7 @@ public class TabController implements Initializable
 		auroraSheet = new AuroraSheet();
 		manager = new AuroraSheetManager(auroraSheet);
 		renderer = new AuroraSheetRenderer(auroraSheet);
+		previewCache = new HashMap<>(4);
 		
 		setupNameField();
 		setupSizeControls();
@@ -227,20 +229,12 @@ public class TabController implements Initializable
 		panRoot.setDisable(true);
 		
 		Platform.runLater(() ->
-		{			
-			ObservableList<Node> nodes;
+		{
 			double zoom;
 			
-			renderer.render(getColorModeSelected());
+			zoom = getPreviewZoomValue();
 			
-			cnvPreview = renderer.getCanvas();
-			zoom = getPreviewZoom();
-			nodes = panPreview.getChildren();
-			
-			cnvPreview.setScaleX(zoom);
-			cnvPreview.setScaleY(zoom);
-			nodes.clear();
-			nodes.add(cnvPreview);
+			updatePreviewCanvas(zoom);			
 			panRoot.setDisable(false);
 			App.getScene().setCursor(Cursor.DEFAULT);
 		});
@@ -386,11 +380,7 @@ public class TabController implements Initializable
 				target = (Node) ev.getTarget();
 				z = (Double) target.getUserData();
 				
-				if (cnvPreview != null)
-				{
-					cnvPreview.setScaleX(z);
-					cnvPreview.setScaleY(z);
-				}
+				updatePreviewCanvas(z);
 			});
 			
 			tglZoomButtons.getToggles().add(btn);
@@ -808,6 +798,25 @@ public class TabController implements Initializable
 	
 	
 	/**
+	 * Atualiza a imagem da prévia.
+	 * 
+	 * @param zoom	Tamanho do zoom
+	 */
+	private void updatePreviewCanvas(double zoom)
+	{
+		Node canvas;
+		ObservableList<Node> nodes;
+		
+		zoom = getPreviewZoomValue();
+		nodes = panPreview.getChildren();
+		canvas = getPreviewNode(zoom);
+		
+		nodes.clear();
+		nodes.add(canvas);
+	}
+	
+	
+	/**
 	 * @return O rodapé da aba de dados brutos da cor.
 	 */
 	private Parent makeRawColorDataFooter()
@@ -951,11 +960,29 @@ public class TabController implements Initializable
 	
 	
 	/**
+	 * Recebe a imagem da prévia.
+	 *
+	 * @param key	O chave da resolução da prévia.
+	 * @return		A imagem da prévia.
+	 */
+	private Node getPreviewNode(Double key)
+	{
+		if (! previewCache.containsKey(key))
+		{
+			renderer.render(getColorModeSelected(), key);
+			previewCache.put(key, renderer.getCanvas());
+		}
+		
+		return previewCache.get(key);
+	}
+	
+	
+	/**
 	 * Recebe o valor atual do zoom da imagem da prévia.
 	 * 
 	 * @return O valor do zoom.
 	 */
-	private Double getPreviewZoom()
+	private Double getPreviewZoomValue()
 	{
 		final Node btn = (Node) tglZoomButtons.getSelectedToggle();
 
