@@ -3,7 +3,7 @@ package com.drxgb.aurorasheetreader.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.drxgb.aurorasheetreader.service.ClipboardHandler;
+import com.drxgb.aurorasheetreader.io.ClipboardHandler;
 import com.drxgb.aurorasheetreader.service.DataViewManager;
 
 import javafx.application.Platform;
@@ -76,7 +76,7 @@ public class RawDataController implements Initializable
 	@FXML
 	public void onBtnCopyAllAction()
 	{
-		// TODO Copiar todos os bytes.
+		getClipboard().copyAll();
 	}
 	
 	

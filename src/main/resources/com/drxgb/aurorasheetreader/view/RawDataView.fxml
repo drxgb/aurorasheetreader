@@ -14,7 +14,7 @@
          <right>
             <HBox spacing="4.0" BorderPane.alignment="CENTER_RIGHT">
                <children>
-                  <Button fx:id="onBtnCopyAllAction" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="96.0" text="Copy all" HBox.hgrow="NEVER" />
+                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBtnCopyAllAction" prefWidth="96.0" text="Copy all" HBox.hgrow="NEVER" />
                   <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBtnPasteAction" prefWidth="96.0" text="Paste" HBox.hgrow="NEVER" />
                </children>
             </HBox>

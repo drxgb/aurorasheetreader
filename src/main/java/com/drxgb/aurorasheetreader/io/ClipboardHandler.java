@@ -1,9 +1,15 @@
-package com.drxgb.aurorasheetreader.service;
+package com.drxgb.aurorasheetreader.io;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 
-import com.drxgb.aurorasheetreader.io.RawDataWriter;
+import com.drxgb.aurorasheetreader.java.io.HexStringOutputStream;
 import com.drxgb.aurorasheetreader.util.Bytes;
+
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 /**
  * Responsável por manipular os dados da área de transferência
@@ -20,6 +26,7 @@ public class ClipboardHandler
 	 * ===========================================================
 	 */
 	
+	private RawDataReader reader;
 	private RawDataWriter writer;
 	
 	
@@ -36,6 +43,7 @@ public class ClipboardHandler
 	 */
 	public ClipboardHandler(Vector<Byte> bytes)
 	{		
+		reader = new RawDataReader(bytes);
 		writer = new RawDataWriter(bytes);
 	}
 	
@@ -46,6 +54,14 @@ public class ClipboardHandler
 	 * ===========================================================
 	 */
 	
+	/**
+	 * Cola o conteúdo ao conjunto de bytes a
+	 * partir da posição solicitada.
+	 *
+	 * @param position	Posição inicial da colagem.
+	 * @param content	Conteúdo a ser colado.
+	 * @return			Se o processo de colagem foi bem sucedido.
+	 */
 	public boolean paste(int position, String content)
 	{
 		byte[] data;
@@ -64,5 +80,40 @@ public class ClipboardHandler
 		{}
 		
 		return false;
+	}
+	
+	
+	/**
+	 * Copia todos os dados brutos para a área de transferência.
+	 */
+	public void copyAll()
+	{
+		Clipboard clipboard;
+		ClipboardContent content;
+		String result;
+		int b;
+		
+		try (
+			InputStream is = reader.asInputStream();
+			OutputStream os = new HexStringOutputStream();
+		)
+		{
+			while (is.available() > 0)
+			{
+				b = is.read();
+				os.write(b);
+			}
+			
+			result = os.toString();
+			clipboard = Clipboard.getSystemClipboard();
+			content = new ClipboardContent();
+			
+			content.putString(result);
+			clipboard.setContent(content);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
