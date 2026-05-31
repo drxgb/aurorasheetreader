@@ -17,7 +17,6 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#onBtnNewTabAction" text="New Tab" />
-                  <MenuItem disable="true" mnemonicParsing="false" onAction="#onMnitCloseTabAction" text="Close Tab" />
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" onAction="#onMnitCloseAction" text="Close" />
             </items>

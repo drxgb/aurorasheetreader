@@ -7,6 +7,7 @@ import com.drxgb.aurorasheetreader.service.AuroraSheetTabFactory;
 import com.drxgb.aurorasheetreader.service.TabFactory;
 import com.drxgb.aurorasheetreader.util.ViewLoader;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -64,22 +65,12 @@ public class MainController
 	
 	
 	/**
-	 * Fecha a aba atual.
-	 */
-	@FXML
-	public void onMnitCloseTabAction()
-	{
-		//
-	}
-	
-	
-	/**
 	 * Encerrar a aplicação.
 	 */
 	@FXML
 	public void onMnitCloseAction()
 	{
-		//
+		Platform.exit();
 	}
 	
 	
