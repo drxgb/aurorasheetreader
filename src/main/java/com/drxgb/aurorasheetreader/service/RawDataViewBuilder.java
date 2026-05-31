@@ -108,7 +108,7 @@ public class RawDataViewBuilder
 		TilePane body;
 		ScrollPane scroll;
 		Label lblTitle;
-		DataManager dataManager;
+		DataViewManager dataManager;
 		ObservableMap<Object, Object> rootProperties;
 		
 		root = (VBox) ViewLoader.load("RawDataView");
@@ -131,7 +131,7 @@ public class RawDataViewBuilder
 		}
 		if (bytes != null)
 		{
-			dataManager = new DataManager(bytes, body.getChildren(), bytesPerGroup);
+			dataManager = new DataViewManager(bytes, body.getChildren(), bytesPerGroup);
 			
 			Platform.runLater(() -> dataManager.syncRawData());
 			dataManager.setScroll(scroll);

@@ -23,7 +23,7 @@ import javafx.scene.text.Font;
  * @author Dr.XGB
  * @version 1.0.0
  */
-public class DataManager
+public class DataViewManager
 {
 	/*
 	 * ===========================================================
@@ -61,7 +61,7 @@ public class DataManager
 	 * @param nodes			Conjunto de nós do contêiner
 	 * @param bytesPerGroup	Quantidade de bytes agrupados
 	 */
-	public DataManager(Vector<Byte> bytes, ObservableList<Node> nodes, Integer bytesPerGroup)
+	public DataViewManager(Vector<Byte> bytes, ObservableList<Node> nodes, Integer bytesPerGroup)
 	{
 		if (bytesPerGroup != 1 && bytesPerGroup != 2 && bytesPerGroup != 4)
 		{
@@ -180,6 +180,28 @@ public class DataManager
 	 */
 	
 	/**
+	 * Recebe os bytes.
+	 *
+	 * @return Os bytes.
+	 */
+	public Vector<Byte> getBytes()
+	{
+		return bytes;
+	}
+	
+	
+	/**
+	 * Recebe o índice do grupo de bytes.
+	 *
+	 * @return O índice do grupo de bytes.
+	 */
+	public int getIndex()
+	{
+		return bytesPerGroup * selectPosition;
+	}
+
+
+	/**
 	 * Recebe a posição selecionada.
 	 *
 	 * @return Posição selecionada.
@@ -188,8 +210,8 @@ public class DataManager
 	{
 		return selectPosition;
 	}
-	
-	
+
+
 	/**
 	 * Recebe o scroll.
 	 *

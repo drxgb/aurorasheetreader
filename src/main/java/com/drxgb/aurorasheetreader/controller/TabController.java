@@ -15,7 +15,7 @@ import com.drxgb.aurorasheetreader.javafx.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.service.AuroraSheetManager;
 import com.drxgb.aurorasheetreader.service.AuroraSheetRenderer;
-import com.drxgb.aurorasheetreader.service.DataManager;
+import com.drxgb.aurorasheetreader.service.DataViewManager;
 import com.drxgb.aurorasheetreader.service.RawDataViewBuilder;
 import com.drxgb.aurorasheetreader.util.ColorMode;
 import com.drxgb.aurorasheetreader.util.NumberFormats;
@@ -144,9 +144,9 @@ public class TabController implements Initializable
 	private AuroraSheetManager manager;
 	private AuroraSheetRenderer renderer;
 	
-	private DataManager color32Manager;
-	private DataManager color16Manager;
-	private DataManager pixelManager;
+	private DataViewManager color32Manager;
+	private DataViewManager color16Manager;
+	private DataViewManager pixelManager;
 	
 	
 	/*
@@ -296,7 +296,7 @@ public class TabController implements Initializable
 		
 		tglColorModes.selectedToggleProperty().addListener((obs, oldValue, newValue) ->
 		{
-			DataManager dataManager;
+			DataViewManager dataManager;
 			ColorMode mode;
 			Integer oldIndex;
 			Integer newIndex;
@@ -405,7 +405,7 @@ public class TabController implements Initializable
 			.valueProperty()
 			.addListener((obs, oldValue, newValue) ->
 			{
-				DataManager dataManager;
+				DataViewManager dataManager;
 				
 				dataManager = getColorDataManager();
 				
@@ -554,9 +554,9 @@ public class TabController implements Initializable
 			lblPixelIndex = (Label) ((HBox) panPixelFooter.getLeft()).getChildren().get(1);
 			lblPixelPosition = (Label) ((HBox) panPixelFooter.getRight()).getChildren().get(1);
 
-			color32Manager = (DataManager) pan32BitData.getProperties().get(DATA_MANAGER);
-			color16Manager = (DataManager) pan16BitData.getProperties().get(DATA_MANAGER);
-			pixelManager = (DataManager) panPixelData.getProperties().get(DATA_MANAGER);
+			color32Manager = (DataViewManager) pan32BitData.getProperties().get(DATA_MANAGER);
+			color16Manager = (DataViewManager) pan16BitData.getProperties().get(DATA_MANAGER);
+			pixelManager = (DataViewManager) panPixelData.getProperties().get(DATA_MANAGER);
 		}
 		catch (IOException e)
 		{
@@ -1010,7 +1010,7 @@ public class TabController implements Initializable
 	 * @param mode	O modo de cor.
 	 * @return		O gerenciador de dados.
 	 */
-	private DataManager getColorDataManager(ColorMode mode)
+	private DataViewManager getColorDataManager(ColorMode mode)
 	{
 		switch (mode)
 		{
@@ -1028,7 +1028,7 @@ public class TabController implements Initializable
 	 * 
 	 * @return	O gerenciador de dados.
 	 */
-	private DataManager getColorDataManager()
+	private DataViewManager getColorDataManager()
 	{
 		return getColorDataManager(getColorModeSelected());
 	}

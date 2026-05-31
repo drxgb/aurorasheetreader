@@ -3,12 +3,17 @@ package com.drxgb.aurorasheetreader.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.drxgb.aurorasheetreader.service.ClipboardHandler;
+import com.drxgb.aurorasheetreader.service.DataViewManager;
+
+import javafx.application.Platform;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 
@@ -35,6 +40,15 @@ public class RawDataController implements Initializable
 	
 	/*
 	 * ===========================================================
+	 * 			*** ASSOCIAÇÕES ***
+	 * ===========================================================
+	 */
+	
+	private ClipboardHandler clipboard;
+	
+	
+	/*
+	 * ===========================================================
 	 * 			*** MÉTODOS IMPLEMENTADOS ***
 	 * ===========================================================
 	 */
@@ -45,6 +59,7 @@ public class RawDataController implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
+		clipboard = null;
 		setupRootProperties();
 	}
 	
@@ -71,7 +86,18 @@ public class RawDataController implements Initializable
 	@FXML
 	public void onBtnPasteAction()
 	{
-		// TODO Colar bytes.
+		DataViewManager manager;
+		String content;
+		int position;
+		
+		manager = getDataManager();
+		position = manager.getIndex();
+		content = Clipboard.getSystemClipboard().getString();
+		
+		if (getClipboard().paste(position, content))
+		{
+			Platform.runLater(() -> manager.syncRawData());
+		}
 	}
 	
 	
@@ -94,5 +120,35 @@ public class RawDataController implements Initializable
 		rootProperties.put("body", panBody);
 		rootProperties.put("scroll", panScroll);
 		rootProperties.put("dataManager", null);
+	}
+	
+	
+	/**
+	 * Recebe o gerenciador de dados.
+	 *
+	 * @return O gerenciador de dados.
+	 */
+	private DataViewManager getDataManager()
+	{
+		return (DataViewManager) panRoot.getProperties().get("dataManager");
+	}
+	
+	
+	/**
+	 * Recebe o manipulador da area de transferência.
+	 *
+	 * @return O manipulador.
+	 */
+	private ClipboardHandler getClipboard()
+	{
+		DataViewManager manager;
+		
+		if (clipboard == null)
+		{
+			manager = getDataManager();
+			clipboard = new ClipboardHandler(manager.getBytes());
+		}
+		
+		return clipboard;
 	}
 }

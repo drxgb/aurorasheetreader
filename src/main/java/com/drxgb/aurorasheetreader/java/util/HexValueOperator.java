@@ -2,6 +2,8 @@ package com.drxgb.aurorasheetreader.java.util;
 
 import java.util.function.UnaryOperator;
 
+import com.drxgb.aurorasheetreader.util.Characters;
+
 import javafx.scene.control.TextFormatter.Change;
 
 /**
@@ -62,7 +64,7 @@ public class HexValueOperator implements UnaryOperator<Change>
 		{
 			ch = text.toUpperCase().charAt(i);
 			
-			if (! (ch >= '0' && ch <= '9') && ! (ch >= 'A' && ch <= 'F'))
+			if (! Characters.isHexValue(ch))
 			{
 				return null;
 			}

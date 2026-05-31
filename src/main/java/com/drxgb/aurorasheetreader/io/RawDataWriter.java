@@ -75,10 +75,12 @@ public class RawDataWriter
 	{
 		for (int i = 0; i < bytes.length; ++i)
 		{
-			if (available() > 0)
+			if (available() <= 0)
 			{
-				data.set(position++, bytes[i]);
+				break;
 			}
+
+			data.set(position++, bytes[i]);
 		}
 	}
 	
