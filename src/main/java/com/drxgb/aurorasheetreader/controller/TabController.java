@@ -9,8 +9,7 @@ import java.util.ResourceBundle;
 
 import com.drxgb.aurorasheetreader.App;
 import com.drxgb.aurorasheetreader.io.ColorTranslator;
-import com.drxgb.aurorasheetreader.java.util.HexValueOperator;
-import com.drxgb.aurorasheetreader.java.util.NumericValueOperator;
+import com.drxgb.aurorasheetreader.javafx.util.Constraints;
 import com.drxgb.aurorasheetreader.javafx.util.HexStringConverter;
 import com.drxgb.aurorasheetreader.model.AuroraSheet;
 import com.drxgb.aurorasheetreader.service.AuroraSheetManager;
@@ -32,10 +31,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -262,6 +260,8 @@ public class TabController implements Initializable
 			tabName = newValue.isEmpty() ? App.UNTITLED : newValue;
 			tab.setText(tabName);
 		});
+		
+		Constraints.selectTextOnFocus(txtName);
 	}
 	
 	
@@ -271,12 +271,19 @@ public class TabController implements Initializable
 	private void setupSizeControls()
 	{
 		final int MAX = Integer.MAX_VALUE;
+		TextInputControl txtWidth;
+		TextInputControl txtHeight;
 		
-		spnWidth.setValueFactory(makeHexSpinnerValueFactory(0, MAX, HEX_32_LENGTH));
-		spnHeight.setValueFactory(makeHexSpinnerValueFactory(0, MAX, HEX_32_LENGTH));
+		txtWidth = spnWidth.getEditor();
+		txtHeight = spnHeight.getEditor();
 		
-		spnWidth.getEditor().setTextFormatter(makeHexFormatter(HEX_32_LENGTH));
-		spnHeight.getEditor().setTextFormatter(makeHexFormatter(HEX_32_LENGTH));
+		Constraints.setHexSpinnerValueFactory(spnWidth, 0, MAX, HEX_32_LENGTH);
+		Constraints.setHexSpinnerValueFactory(spnHeight, 0, MAX, HEX_32_LENGTH);
+
+		Constraints.setHexTextFormatter(txtWidth, HEX_32_LENGTH);
+		Constraints.setHexTextFormatter(txtHeight, HEX_32_LENGTH);		
+		Constraints.selectTextOnFocus(txtWidth);
+		Constraints.selectTextOnFocus(txtHeight);
 	}
 	
 	
@@ -394,13 +401,33 @@ public class TabController implements Initializable
 	 */
 	@SuppressWarnings("unused")
 	private void setupColorPropertiesControls()
-	{		
-		spnIndex.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
-		spnRed.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
-		spnGreen.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
-		spnBlue.setValueFactory(makeIntegerSpinnerValueFactory(0, BYTE_MAX));
+	{
+		TextInputControl txtIndex;
+		TextInputControl txtRed;
+		TextInputControl txtGreen;
+		TextInputControl txtBlue;
 		
-		spnIndex.getEditor().setTextFormatter(makeNumericFormatter());
+		txtIndex = spnIndex.getEditor();
+		txtRed = spnRed.getEditor();
+		txtGreen = spnGreen.getEditor();
+		txtBlue = spnBlue.getEditor();
+		
+		Constraints.setIntegerSpinnerValueFactory(spnIndex, 0, BYTE_MAX);
+		Constraints.setIntegerSpinnerValueFactory(spnRed, 0, BYTE_MAX);
+		Constraints.setIntegerSpinnerValueFactory(spnGreen, 0, BYTE_MAX);
+		Constraints.setIntegerSpinnerValueFactory(spnBlue, 0, BYTE_MAX);
+		
+		Constraints.setNumberTextFormatter(txtIndex);
+		Constraints.setNumberTextFormatter(txtRed);
+		Constraints.setNumberTextFormatter(txtGreen);
+		Constraints.setNumberTextFormatter(txtBlue);
+		
+		Constraints.selectTextOnFocus(txtIndex);
+		Constraints.selectTextOnFocus(txtRed);
+		Constraints.selectTextOnFocus(txtGreen);
+		Constraints.selectTextOnFocus(txtBlue);
+		Constraints.selectTextOnFocus(txtHexColor);
+
 		spnIndex
 			.valueProperty()
 			.addListener((obs, oldValue, newValue) ->
@@ -420,10 +447,6 @@ public class TabController implements Initializable
 		spnRed.valueProperty().addListener(makeTextFieldHexChangeListener());
 		spnGreen.valueProperty().addListener(makeTextFieldHexChangeListener());
 		spnBlue.valueProperty().addListener(makeTextFieldHexChangeListener());
-		
-		spnRed.getEditor().setTextFormatter(makeNumericFormatter());
-		spnGreen.getEditor().setTextFormatter(makeNumericFormatter());
-		spnBlue.getEditor().setTextFormatter(makeNumericFormatter());
 		
 		txtHexColor
 			.textProperty()
@@ -454,6 +477,14 @@ public class TabController implements Initializable
 	@SuppressWarnings("unused")
 	private void setupPixelPropertiesControls()
 	{
+		TextInputControl txtX;
+		TextInputControl txtY;
+		TextInputControl txtValue;
+		
+		txtX = spnX.getEditor();
+		txtY = spnY.getEditor();
+		txtValue = spnValue.getEditor();
+		
 		updatePixelPositionSpinners();
 		
 		spnX.valueProperty().addListener((obs, oldValue, newValue) ->
@@ -468,8 +499,6 @@ public class TabController implements Initializable
 			updateTextFieldPixelValue(newValue);
 		});
 		
-		spnValue.setValueFactory(makeHexSpinnerValueFactory(0, BYTE_MAX, HEX_BYTE_LENGTH));
-		spnValue.getEditor().setTextFormatter(makeHexFormatter(HEX_BYTE_LENGTH));
 		spnValue.valueProperty().addListener((obs, oldValue, newValue) ->
 		{
 			int x;
@@ -488,6 +517,15 @@ public class TabController implements Initializable
 				pixelManager.updateSingleData(index);
 			}
 		});
+		
+		Constraints.setHexSpinnerValueFactory(spnValue, 0, BYTE_MAX, HEX_BYTE_LENGTH);
+		Constraints.setNumberTextFormatter(txtX);
+		Constraints.setNumberTextFormatter(txtY);
+		Constraints.setHexTextFormatter(txtValue, HEX_BYTE_LENGTH);
+
+		Constraints.selectTextOnFocus(txtX);
+		Constraints.selectTextOnFocus(txtY);
+		Constraints.selectTextOnFocus(txtValue);
 	}
 	
 	
@@ -576,8 +614,8 @@ public class TabController implements Initializable
 		width = spnWidth.getValue();
 		height = spnHeight.getValue();
 		
-		spnX.setValueFactory(makeIntegerSpinnerValueFactory(0, width > 0 ? (width - 1) : 0));
-		spnY.setValueFactory(makeIntegerSpinnerValueFactory(0, height > 0 ? (height - 1) : 0));
+		Constraints.setIntegerSpinnerValueFactory(spnX, 0, width > 0 ? (width - 1) : 0);
+		Constraints.setIntegerSpinnerValueFactory(spnY, 0, height > 0 ? (height - 1) : 0);
 	}
 	
 	
@@ -632,7 +670,7 @@ public class TabController implements Initializable
 		converter = new HexStringConverter(digits);
 		value = manager.getColorFromIndex(index, mode);
 		
-		txtHexColor.setTextFormatter(makeHexFormatter(len));
+		Constraints.setHexTextFormatter(txtHexColor, len);
 		txtHexColor.setText(converter.toString(value));
 	}
 	
@@ -866,69 +904,6 @@ public class TabController implements Initializable
 		updatePositionLabel(lblValue, 0, 0);
 		
 		return panFooter;
-	}
-	
-	
-	/**
-	 * Método fábrica que instancia a fábrica de valores
-	 * inteiros em <code>Spinner</code>.
-	 * 
-	 * @see javafx.scene.control.Spinner
-	 * 
-	 * @param min	Valor mínimo
-	 * @param max	Valor máximo
-	 * @return	A fábrica de valores de <code>Spinner</code>.
-	 */
-	private SpinnerValueFactory<Integer> makeIntegerSpinnerValueFactory(int min, int max)
-	{
-		return new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max);
-	}
-	
-	
-	/**
-	 * Método fábrica que instancia a fábrica de valores
-	 * inteiros com representação hexadecimal em <code>Spinner</code>.
-	 * 
-	 * @see javafx.scene.control.Spinner
-	 * 
-	 * @param min		Valor mínimo
-	 * @param max		Valor máximo
-	 * @param limit		Quantidade de caracters
-	 * @return	A fábrica de valores de <code>Spinner</code>.
-	 */
-	private SpinnerValueFactory<Integer> makeHexSpinnerValueFactory(int min, int max, int limit)
-	{
-		SpinnerValueFactory<Integer> factory;
-		
-		factory = makeIntegerSpinnerValueFactory(min, max);
-		factory.setConverter(new HexStringConverter(limit));
-		
-		return factory;
-	}
-	
-	
-	/**
-	 * Cria o formatador de texto.
-	 * 
-	 * @param <T>	Tipo do conteúdo do formatador.
-	 * @param limit	O limite de caracteres do texto.
-	 * @return	O formatador de texto.
-	 */
-	private <T> TextFormatter<T> makeHexFormatter(int limit)
-	{
-		return new TextFormatter<>(new HexValueOperator(limit));
-	}
-	
-	
-	/**
-	 * Cria o formatador de texto.
-	 *
-	 * @param <T>	Tipo de conteúdo do formatador.
-	 * @return		O formatador de texto.
-	 */
-	private <T> TextFormatter<T> makeNumericFormatter()
-	{
-		return new TextFormatter<>(new NumericValueOperator());
 	}
 	
 	
