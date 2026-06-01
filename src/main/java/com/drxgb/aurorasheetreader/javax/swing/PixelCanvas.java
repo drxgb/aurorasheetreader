@@ -55,6 +55,7 @@ public class PixelCanvas extends JPanel
 		scale = 1.0;
 		
 		add(canvas);
+		setMinimumSize(new Dimension(1, 1));
 	}
 	
 	

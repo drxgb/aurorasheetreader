@@ -386,7 +386,10 @@ public class TabController implements Initializable
 				target = (Node) ev.getTarget();
 				z = (Double) target.getUserData();
 				
-				updatePreviewCanvas(z);
+				if (renderer.getCanvas() != null)
+				{
+					updatePreviewCanvas(z);
+				}
 			});
 			
 			tglZoomButtons.getToggles().add(btn);
