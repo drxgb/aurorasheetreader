@@ -2,7 +2,7 @@ package com.drxgb.aurorasheetreader.service;
 
 import java.io.IOException;
 
-import com.drxgb.aurorasheetreader.util.ViewLoader;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
@@ -26,7 +26,7 @@ public class AuroraSheetTabFactory implements TabFactory
 		Tab tab;
 		Parent root;
 		
-		root = ViewLoader.load("TabView");
+		root = Resources.load("TabView");
 		tab = new Tab();
 		
 		root.getProperties().put("tab", tab);

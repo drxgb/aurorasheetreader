@@ -1,9 +1,8 @@
 package com.drxgb.aurorasheetreader;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import com.drxgb.aurorasheetreader.util.ViewLoader;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -55,21 +54,21 @@ public class App extends Application
 	 */
 	@Override
 	public void start(Stage stage) throws IOException
-	{
-		final Class<App> appClass = App.class;
-		
+	{		
 		Parent root;
-		InputStream isIcon;
+		Image icon;
 
 		app = this;
-		root = ViewLoader.load("MainView");
-		isIcon = appClass.getResourceAsStream("/resources/favicon.png");
-		scene = new Scene(root);
 		
-		if (isIcon != null)
+		root = Resources.load("MainView");
+		icon = Resources.loadImage("favicon.png");
+		
+		if (icon != null)
 		{
-			stage.getIcons().add(new Image(isIcon));
+			stage.getIcons().add(icon);
 		}
+		
+		scene = new Scene(root);
 		
 		stage.setScene(scene);
 		stage.setTitle(NAME);

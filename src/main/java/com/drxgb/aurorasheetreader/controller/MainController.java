@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.drxgb.aurorasheetreader.App;
 import com.drxgb.aurorasheetreader.service.AuroraSheetTabFactory;
 import com.drxgb.aurorasheetreader.service.TabFactory;
-import com.drxgb.aurorasheetreader.util.ViewLoader;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -89,7 +89,7 @@ public class MainController
 		
 		mainStage = App.getWindow();
 		aboutStage = new Stage();
-		root = ViewLoader.load("AboutView");
+		root = Resources.load("AboutView");
 		scene = new Scene(root, 320.0, 240.0);
 		
 		aboutStage.setTitle("About");

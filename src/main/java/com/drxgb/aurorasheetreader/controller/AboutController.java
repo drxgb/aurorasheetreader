@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.drxgb.aurorasheetreader.App;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.application.HostServices;
 import javafx.event.ActionEvent;
@@ -11,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * Controlador da tela Sobre.
@@ -25,6 +28,8 @@ public class AboutController implements Initializable
 	 * 			*** CONTROLES ***
 	 * ===========================================================
 	 */
+	
+	@FXML private ImageView imgDrxgb;
 	
 	@FXML private Label lblTitle;
 	@FXML private Label lblVersion;
@@ -50,6 +55,7 @@ public class AboutController implements Initializable
 		lblJavaVersion.setText(System.getProperty("java.version"));
 		lblJavaFxVersion.setText(System.getProperty("javafx.runtime.version"));
 
+		setupLogoImage();
 		setupCopyright();
 	}
 	
@@ -86,6 +92,18 @@ public class AboutController implements Initializable
 	 * 			*** MÉTODOS PRIVADOS ***
 	 * ===========================================================
 	 */
+	
+	/**
+	 * Carrega a imagem do logo do autor.
+	 */
+	private void setupLogoImage()
+	{
+		Image img;
+		
+		img = Resources.loadImage("drxgb.png");
+		imgDrxgb.setImage(img);
+	}
+	
 	
 	/**
 	 * Escreve o conteúdo de direitos autorais.

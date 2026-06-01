@@ -3,7 +3,7 @@ package com.drxgb.aurorasheetreader.service;
 import java.io.IOException;
 import java.util.Vector;
 
-import com.drxgb.aurorasheetreader.util.ViewLoader;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -111,7 +111,7 @@ public class RawDataViewBuilder
 		DataViewManager dataManager;
 		ObservableMap<Object, Object> rootProperties;
 		
-		root = (VBox) ViewLoader.load("RawDataView");
+		root = (VBox) Resources.load("RawDataView");
 		rootProperties = root.getProperties();
 		header = (BorderPane) rootProperties.get("header");
 		body = (TilePane) rootProperties.get("body");

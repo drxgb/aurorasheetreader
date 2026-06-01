@@ -1,7 +1,6 @@
 package com.drxgb.aurorasheetreader.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,7 @@ import com.drxgb.aurorasheetreader.service.DataViewManager;
 import com.drxgb.aurorasheetreader.service.RawDataViewBuilder;
 import com.drxgb.aurorasheetreader.util.ColorMode;
 import com.drxgb.aurorasheetreader.util.NumberFormats;
+import com.drxgb.aurorasheetreader.util.Resources;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -348,13 +348,11 @@ public class TabController implements Initializable
 	 */
 	private void setupPreview()
 	{
-		InputStream is;
 		Image img;
 		BackgroundImage bgImg;
 		Background bg;
 		
-		is = App.class.getResourceAsStream("/resources/img/bg0.png");
-		img = new Image(is);
+		img = Resources.loadImage("img/bg0.png");
 		bgImg = new BackgroundImage(img, null, null, null, null);
 		bg = new Background(bgImg);
 		

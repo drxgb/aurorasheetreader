@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,15 +13,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<HBox alignment="TOP_CENTER" spacing="24.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/26" fx:controller="com.drxgb.aurorasheetreader.controller.AboutController">
+<HBox alignment="TOP_CENTER" spacing="24.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drxgb.aurorasheetreader.controller.AboutController">
    <children>
       <StackPane>
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="/resources/drxgb.png" />
-               </image>
+            <ImageView fx:id="imgDrxgb" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
             </ImageView>
          </children>
       </StackPane>
