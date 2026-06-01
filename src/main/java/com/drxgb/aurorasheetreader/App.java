@@ -63,7 +63,7 @@ public class App extends Application
 
 		app = this;
 		root = ViewLoader.load("MainView");
-		isIcon = appClass.getResourceAsStream("favicon.png");
+		isIcon = appClass.getResourceAsStream("/resources/favicon.png");
 		scene = new Scene(root);
 		
 		if (isIcon != null)

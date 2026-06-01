@@ -185,7 +185,7 @@ public class AuroraSheetRenderer
 		
 		for (Byte b : pixels)
 		{
-			pixelBuf[i++] = palette.get((int) b);
+			pixelBuf[i++] = palette.get(Byte.toUnsignedInt(b));
 		}
 	}
 	
@@ -212,6 +212,11 @@ public class AuroraSheetRenderer
 		return () ->
 		{
 			PixelCanvas content;
+			
+			if (auroraSheet.isEmpty())
+			{
+				return;
+			}
 			
 			content = new PixelCanvas(width, height);
 			content.setPixels(pixelBuf);

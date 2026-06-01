@@ -232,7 +232,8 @@ public class TabController implements Initializable
 			
 			zoom = getPreviewZoomValue();
 			
-			updatePreviewCanvas(zoom);			
+			updatePreviewCanvas(zoom);
+			previewCache.clear();
 			panRoot.setDisable(false);
 			App.getScene().setCursor(Cursor.DEFAULT);
 		});
@@ -352,7 +353,7 @@ public class TabController implements Initializable
 		BackgroundImage bgImg;
 		Background bg;
 		
-		is = App.class.getResourceAsStream("img/bg0.png");
+		is = App.class.getResourceAsStream("/resources/img/bg0.png");
 		img = new Image(is);
 		bgImg = new BackgroundImage(img, null, null, null, null);
 		bg = new Background(bgImg);
@@ -961,7 +962,7 @@ public class TabController implements Initializable
 	{
 		final Node btn = (Node) tglZoomButtons.getSelectedToggle();
 
-		return (Double) btn.getUserData();
+		return btn == null ? 1.0 : (Double) btn.getUserData();
 	}
 	
 	

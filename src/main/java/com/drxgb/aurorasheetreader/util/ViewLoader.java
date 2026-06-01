@@ -8,7 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
 /**
+ * Utilitáio para carregar as telas.
  * 
+ * @author Dr.XGB
+ * @version 1.0.0
  */
 public abstract class ViewLoader
 {
@@ -25,7 +28,7 @@ public abstract class ViewLoader
 		FXMLLoader loader;
 		
 		fxml = new StringBuilder()		
-				.append("view/")
+				.append("/resources/view/")
 				.append(path)
 				.append(".fxml")
 				.toString();
